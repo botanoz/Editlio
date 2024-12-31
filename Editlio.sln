@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editlio.Web", "Editlio.Web\Editlio.Web.csproj", "{1C8432B0-7D4D-4E9A-B241-58434A6127E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editlio.Api", "Editlio.Api\Editlio.Api.csproj", "{9AAE9124-A751-4546-B952-5D63323E7DDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editlio.Domain", "Editlio.Domain\Editlio.Domain.csproj", "{4A575F96-C25F-408F-84E1-7D4DF6455180}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editlio.Infrastructure", "Editlio.Infrastructure\Editlio.Infrastructure.csproj", "{C1A18669-4488-40DC-9466-4AEED7F3F4E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editlio.Shared", "Editlio.Shared\Editlio.Shared.csproj", "{BC788F02-FC96-4A82-9724-1B472EFF6BF4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Çözüm Öğeleri", "Çözüm Öğeleri", "{3D10504F-BFE1-4822-AA2B-E0D20F0DA895}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Readme.md = Readme.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C8432B0-7D4D-4E9A-B241-58434A6127E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C8432B0-7D4D-4E9A-B241-58434A6127E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C8432B0-7D4D-4E9A-B241-58434A6127E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C8432B0-7D4D-4E9A-B241-58434A6127E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AAE9124-A751-4546-B952-5D63323E7DDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AAE9124-A751-4546-B952-5D63323E7DDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AAE9124-A751-4546-B952-5D63323E7DDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AAE9124-A751-4546-B952-5D63323E7DDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A575F96-C25F-408F-84E1-7D4DF6455180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A575F96-C25F-408F-84E1-7D4DF6455180}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A575F96-C25F-408F-84E1-7D4DF6455180}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A575F96-C25F-408F-84E1-7D4DF6455180}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1A18669-4488-40DC-9466-4AEED7F3F4E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1A18669-4488-40DC-9466-4AEED7F3F4E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1A18669-4488-40DC-9466-4AEED7F3F4E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1A18669-4488-40DC-9466-4AEED7F3F4E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC788F02-FC96-4A82-9724-1B472EFF6BF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC788F02-FC96-4A82-9724-1B472EFF6BF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC788F02-FC96-4A82-9724-1B472EFF6BF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC788F02-FC96-4A82-9724-1B472EFF6BF4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A4344AE5-294B-4EB8-B15D-CA3B2713FE56}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,61 @@
+# General .gitignore file for ASP.NET Core projects
+
+# Build Folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.vs
+*.suo
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# IDE Settings
+.idea/
+
+# Packages
+*.nupkg
+*.snupkg
+
+# Temporary files
+*.tmp
+*.temp
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# Config files
+appsettings.*.json
+appsettings.json
+
+# DotNet Tools
+.dotnet/
+
+# Coverage
+coverage/
+
+# Database
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+# Backup Files
+*.bak
+*.swp
+~$*
+*.pid
+
+# Generated files
+*.Generated.cs
