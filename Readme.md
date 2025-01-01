@@ -1,5 +1,5 @@
 ﻿
-# Editlio
+# Editlio v0.5
 
 **Editlio**, kullanıcıların benzersiz URL'lere sahip sayfalar oluşturarak gerçek zamanlı kod ve yazı düzenlemeleri yapmalarına olanak tanıyan bir platformdur. Üyelik sistemi ile sayfalar şifre korumalı hale getirilebilir ve kullanıcılar arasında eş zamanlı düzenleme sağlanır.
 
