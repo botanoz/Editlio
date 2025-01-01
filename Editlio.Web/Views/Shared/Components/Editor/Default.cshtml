@@ -1,255 +1,116 @@
 ﻿@model Editlio.Web.Models.PageViewModel
 
-<!-- 
-  Tam ekran alan:
-  display: flex; justify-content: center; align-items: center => #editor ortalanır
-  height: 100vh (Eğer Layout varsa, main {height: calc(100vh - 56px);} ve burayı %100 ayarlayabilirsin.)
--->
-<div id="editor-container"
-     style="
-        width: 100%;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-     ">
-
-    <!-- Editor alanı:
-         - flex:1 -> yatayda esneyebilir
-         - max-width:90% -> kenarlardan %10 pay
-         - height:95% -> #editor-container'ın %95'i kadar yükseklik
-    -->
-    <div id="editor"
-         style="
-            flex: 1;
-            max-width: 90%;
-            height: 95%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-         ">
-    </div>
-</div>
-
-<!-- Durum / uyarı mesajları -->
-<small id="status" class="text-muted"></small>
-
-<!-- Gerekli Scriptler (SignalR + Monaco Editor) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
-
-<script>
-    console.log("[Editor] Script loaded. Slug:", "@Model.Slug");
-
-    // Razor Model'den gelen slug (ör. "a" vs.)
-    const pageSlug = "@Model.Slug" || "";
-
-    // Monaco Editor instance
-    let editor;
-    // Debounce timer
-    let typingTimer;
-
-    // SignalR bağlantısı => /hubs/page
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/hubs/page")
-        .build();
-
-    // Diğer kullanıcıların cursor dekorasyonları ve renkleri
-    const userCursors = {}; // { userId: monacoDecorationId[] }
-    const userColors = {};  // { userId: "#rrggbb" }
-
-    // Rastgele renk üretimi
-    function generateUserColor() {
-        return '#' + Math.floor(Math.random() * 16777215).toString(16);
-    }
-
-    // Sunucudan ilk içerik almak: /api/page/slug/{pageSlug}
-    // Dönüş formatı: { success: true, data: { id, slug, content, ... }, errors: [] }
-    async function loadInitialContent() {
-        try {
-            if (!pageSlug) {
-                console.warn("[Editor] No slug => skipping load content.");
-                document.getElementById("status").innerText = "No slug => no content loaded.";
-                return;
-            }
-
-            const url = `/api/page/slug/${pageSlug}`;
-            console.log("[Editor] GET:", url);
-
-            const response = await fetch(url);
-            if (!response.ok) {
-                console.error("[Editor] Not OK. Status:", response.status);
-                document.getElementById("status").innerText = "Failed to load content (HTTP " + response.status + ").";
-                return;
-            }
-
-            // result => { success: boolean, data: { id, slug, content, ... }, errors: string[] }
-            const result = await response.json();
-            if (result.success && result.data) {
-                const content = result.data.content || "";
-                editor.setValue(content);
-                document.getElementById("status").innerText = "Content loaded.";
-                console.log("[Editor] Content loaded from server:", content);
-            } else {
-                console.warn("[Editor] success=false or data missing", result);
-                document.getElementById("status").innerText = "Content not found or error.";
-            }
-        } catch (err) {
-            console.error("[Editor] Error loading content:", err);
-            document.getElementById("status").innerText = "Error loading content.";
-        }
-    }
-
-    // Monaco Editor AMD config
-    require.config({
-        paths: {
-            'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs'
-        }
-    });
-
-    require(["vs/editor/editor.main"], function () {
-        console.log("[Editor] Monaco require callback triggered.");
-
-        // Editörü oluştur
-        editor = monaco.editor.create(document.getElementById("editor"), {
-            value: "",
-            language: "plaintext",
-            theme: "vs-dark",
-            automaticLayout: true,
-            minimap: { enabled: true },
-            scrollbar: {
-                verticalScrollbarSize: 14,
-                horizontalScrollbarSize: 14,
-                arrowSize: 16
-            },
-            wordWrap: "on",
-            fontSize: 16,
-            lineNumbers: "on",
-            renderWhitespace: "boundary",
-            quickSuggestions: true,
-
-            // Ek konfor
-            smoothScrolling: true,
-            scrollBeyondLastLine: false
-        });
-
-        // Odak ver
-        editor.focus();
-        console.log("[Editor] Editor created. Now loading initial content...");
-
-        // API'den ilk content al
-        loadInitialContent();
-
-        // İçerik değiştiğinde => 500 ms debounce => UpdateContent(slug, content)
-        editor.onDidChangeModelContent(() => {
-            clearTimeout(typingTimer);
-            document.getElementById("status").innerText = "Saving...";
-
-            typingTimer = setTimeout(() => {
-                const newContent = editor.getValue();
-                console.log("[Editor] UpdateContent => slug:", pageSlug, ", content length:", newContent.length);
-
-                connection.invoke("UpdateContent", pageSlug, newContent)
-                    .then(() => {
-                        document.getElementById("status").innerText = "Changes saved.";
-                        console.log("[Editor] Content updated on server.");
-                    })
-                    .catch(err => {
-                        console.error("[Editor] Error sending content update:", err);
-                        document.getElementById("status").innerText = "Failed to save changes.";
-                    });
-            }, 500);
-        });
-
-        // Cursor değiştiğinde => UpdateCursor
-        editor.onDidChangeCursorPosition(() => {
-            const position = editor.getPosition();
-            connection.invoke("UpdateCursor", pageSlug, position)
-                .catch(err => {
-                    console.error("[Editor] Error sending cursor update:", err);
-                });
-        });
-    });
-
-    // SignalR bağlantısını başlat
-    connection.start()
-        .then(() => {
-            console.log("[Editor] Connected to SignalR hub.");
-            // Aynı slug ile group'a dahil ol
-            if (pageSlug) {
-                console.log("[Editor] JoinPage => slug:", pageSlug);
-                connection.invoke("JoinPage", pageSlug)
-                    .catch(err => {
-                        console.error("[Editor] JoinPage error:", err);
-                    });
-            } else {
-                console.warn("[Editor] pageSlug is empty => skipping JoinPage.");
-            }
-
-            // Diğer kullanıcıdan gelen içerik
-            connection.on("ReceiveContentUpdate", (updatedContent) => {
-                if (!editor) return;
-                const currentContent = editor.getValue();
-                if (currentContent !== updatedContent) {
-                    editor.setValue(updatedContent);
-                    document.getElementById("status").innerText = "Content updated by another user.";
-                    console.log("[Editor] External content update received.");
-                }
-            });
-
-            // Diğer kullanıcıların cursor hareketi
-            connection.on("ReceiveCursorUpdate", (userId, position) => {
-                if (!editor) return;
-
-                // Rastgele renk atama
-                if (!userColors[userId]) {
-                    userColors[userId] = generateUserColor();
-                    console.log(`[Editor] Assigned color ${userColors[userId]} to user ${userId}`);
-                }
-
-                const range = new monaco.Range(
-                    position.lineNumber,
-                    position.column,
-                    position.lineNumber,
-                    position.column
-                );
-
-                const decorationOptions = {
-                    range: range,
-                    options: {
-                        className: `user-cursor-${userId}`,
-                        hoverMessage: { value: `User: ${userId}` }
-                    }
-                };
-
-                if (!userCursors[userId]) {
-                    const decoration = editor.deltaDecorations([], [decorationOptions]);
-                    userCursors[userId] = decoration;
-                } else {
-                    editor.deltaDecorations(userCursors[userId], [decorationOptions]);
-                }
-            });
-        })
-        .catch(err => {
-            console.error("[Editor] Error connecting to SignalR hub:", err);
-            document.getElementById("status").innerText = "Real-time connection failed.";
-        });
-</script>
+<!-- CodeMirror CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/codemirror.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/theme/dracula.min.css" />
+<!-- Eklenti CSS'leri -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/fold/foldgutter.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/hint/show-hint.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/dialog/dialog.css" />
 
 <style>
-    /* Editör gölgesi vb. */
-    #editor {
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    /*
-      Cursorlar .user-cursor-{ConnectionId}
-      Basitçe kırmızı (#ff0000). 
-      userColors dict'de her user'a farklı renk var ama 
-      apply etme kısmını advanced approach ile yapabilirsin.
-    */
-    .user-cursor {
-        width: 2px;
-        background-color: #ff0000;
-        position: absolute;
+    .CodeMirror {
+        height: calc(100vh - 56px);
+        font-size: 15px;
     }
 </style>
+
+<div id="editor-container"></div>
+
+<!-- CodeMirror ve Eklentiler -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/selection/active-line.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/fold/foldcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/fold/foldgutter.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/fold/brace-fold.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/hint/javascript-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/search/search.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/search/searchcursor.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/dialog/dialog.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.0/dist/browser/signalr.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const slug = "@Model.Slug";
+
+        // SignalR bağlantısını başlat
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7273/hubs/realtime")
+            .withAutomaticReconnect()
+            .build();
+
+        // CodeMirror editörü başlat
+        const editor = CodeMirror(document.getElementById("editor-container"), {
+            value: `@Html.Raw(Model.Content)`,
+            mode: "javascript",
+            theme: "dracula",
+            lineNumbers: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,        // Parantezleri eşleştirme
+            styleActiveLine: true,      // Aktif satırı vurgulama
+            lineWrapping: true,         // Uzun satırları kaydırma
+            foldGutter: true,           // Kod katlama
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            tabSize: 2,                 // Tab genişliği
+            indentWithTabs: false,      // Space ile girinti
+            extraKeys: {
+                "Ctrl-Space": "autocomplete",  // Otomatik tamamlama
+                "Ctrl-F": "find",             // Arama
+                "Ctrl-H": "replace",          // Değiştirme
+                "Alt-F": "findPersistent",    // Sürekli arama
+                "Ctrl-/": function (cm) {      // Yorum satırı
+                    cm.toggleComment();
+                },
+                "Ctrl-J": "toMatchingTag",    // Eşleşen taga git
+                "Tab": function (cm) {         // Tab tuşu davranışı
+                    if (cm.somethingSelected()) {
+                        cm.indentSelection("add");
+                    } else {
+                        cm.replaceSelection("  ", "end");
+                    }
+                }
+            }
+        });
+
+        // Otomatik tamamlama için olay dinleyici
+        editor.on("keyup", function (cm, event) {
+            if (!cm.state.completionActive &&
+                event.keyCode > 64 && event.keyCode < 91) {
+                CodeMirror.commands.autocomplete(cm, null, { completeSingle: false });
+            }
+        });
+
+        // SignalR bağlantısını başlat
+        connection.start()
+            .then(() => {
+                console.log("SignalR connected.");
+                connection.invoke("JoinPage", slug)
+                    .catch(err => console.error("Error joining group:", err));
+
+                connection.on("ReceiveUpdatedContent", (updatedContent) => {
+                    if (editor.getValue() !== updatedContent) {
+                        const cursor = editor.getCursor();
+                        const scrollInfo = editor.getScrollInfo();
+                        editor.setValue(updatedContent);
+                        editor.setCursor(cursor);
+                        editor.scrollTo(scrollInfo.left, scrollInfo.top);
+                    }
+                });
+
+                let debounceTimer;
+                editor.on("change", () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        const updatedContent = editor.getValue();
+                        connection.invoke("UpdatePageContent", slug, updatedContent)
+                            .catch(err => console.error("Error updating content:", err));
+                    }, 300);
+                });
+            })
+            .catch(err => console.error("SignalR connection failed:", err));
+    });
+</script>
