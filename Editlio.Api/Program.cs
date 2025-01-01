@@ -25,8 +25,17 @@ builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Exception Middleware için ekleme
-builder.Services.AddSingleton<ExceptionMiddleware>();
+// CORS politikasý ekle
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()
+              .SetIsOriginAllowed(origin => true); // Geliþtirme aþamasýnda tüm originlere izin ver
+    });
+});
 
 var app = builder.Build();
 
@@ -39,6 +48,9 @@ if (app.Environment.IsDevelopment())
 
 // Middleware konfigürasyonu
 app.UseHttpsRedirection();
+
+// CORS Middleware
+app.UseCors();
 
 // Exception Middleware
 app.UseMiddleware<ExceptionMiddleware>();
