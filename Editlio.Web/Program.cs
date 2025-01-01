@@ -1,4 +1,4 @@
-using Editlio.Web.Hubs;
+
 using Editlio.Web.Services.Abstracts;
 using Editlio.Web.Services.Concretes;
 
@@ -63,7 +63,7 @@ app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
-app.MapHub<PageHub>("/hubs/page");
+
 
 app.MapControllerRoute(
     name: "default",
