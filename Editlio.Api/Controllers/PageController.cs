@@ -1,6 +1,5 @@
 ﻿using Editlio.Domain.Services.Abstracts;
 using Editlio.Shared.DTOs.Page;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Editlio.Api.Controllers
@@ -41,6 +40,13 @@ namespace Editlio.Api.Controllers
         public async Task<IActionResult> GetUserPages(int userId)
         {
             var result = await _pageService.GetUserPagesAsync(userId);
+            return result.Success ? Ok(result) : NotFound(result);
+        }
+
+        [HttpGet("slug/{slug}")]
+        public async Task<IActionResult> GetBySlug(string slug)
+        {
+            var result = await _pageService.GetPageBySlugAsync(slug);
             return result.Success ? Ok(result) : NotFound(result);
         }
     }

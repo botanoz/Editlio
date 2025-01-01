@@ -1,22 +1,81 @@
-html {
-  font-size: 14px;
+:root {
+    --navbar-height: 60px;
+    --primary-dark: #1e1e1e;
+    --secondary-dark: #252526;
+    --accent-color: #007acc;
+    --text-light: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.7);
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+html, body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--primary-dark);
+    color: var(--text-light);
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+header {
+    height: var(--navbar-height);
+    background-color: var(--secondary-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+.navbar {
+    height: 100%;
+    padding: 0 1.5rem;
 }
 
-body {
-  margin-bottom: 60px;
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text-light) !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
+
+    .navbar-brand i {
+        color: var(--accent-color);
+    }
+
+.nav-link {
+    color: var(--text-muted) !important;
+    transition: all 0.2s ease;
+    padding: 0.5rem 1rem;
+    margin: 0 0.2rem;
+    border-radius: 4px;
+}
+
+    .nav-link:hover, .nav-link.active {
+        color: var(--text-light) !important;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+main {
+    height: calc(100vh - var(--navbar-height));
+    margin-top: var(--navbar-height);
+    overflow: hidden;
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .nav-link {
+        padding: 0.4rem 0.8rem;
+    }
+}
+
