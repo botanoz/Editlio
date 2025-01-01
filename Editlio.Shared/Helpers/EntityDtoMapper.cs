@@ -3,6 +3,10 @@ using Editlio.Shared.DTOs.File;
 using Editlio.Shared.DTOs.Page;
 using Editlio.Shared.DTOs.User;
 using Editlio.Shared.DTOs;
+using Editlio.Shared.DTOs.RealTimeUpdate;
+using Editlio.Shared.DTOs.RefreshToken;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Editlio.Shared.Helpers
 {
@@ -35,6 +39,27 @@ namespace Editlio.Shared.Helpers
             };
         }
 
+        // PageCreateDto -> Page
+        public static Page ToEntity(this PageCreateDto dto)
+        {
+            return new Page
+            {
+                Slug = dto.Slug,
+                Content = dto.Content,
+                IsProtected = dto.IsProtected,
+                PasswordHash = dto.Password
+            };
+        }
+
+        // PageUpdateDto -> Page (Mevcut entity'yi güncellemek için)
+        public static Page ToEntity(this PageUpdateDto dto, Page existingPage)
+        {
+            existingPage.Content = dto.Content;
+            existingPage.IsProtected = dto.IsProtected;
+            existingPage.PasswordHash = dto.Password;
+            return existingPage;
+        }
+
         // User -> UserDto
         public static UserDto ToDto(this User entity)
         {
@@ -59,6 +84,26 @@ namespace Editlio.Shared.Helpers
             };
         }
 
+        // UserRegisterDto -> User
+        public static User ToEntity(this UserRegisterDto dto)
+        {
+            return new User
+            {
+                Username = dto.Username,
+                Email = dto.Email,
+                PasswordHash = dto.Password
+            };
+        }
+
+        // UserDto -> User (Mevcut entity'yi güncellemek için)
+        public static User ToEntity(this UserDto dto, User existingUser)
+        {
+            existingUser.Username = dto.Username;
+            existingUser.Email = dto.Email;
+            // Diğer güncellenebilir alanlar buraya eklenebilir
+            return existingUser;
+        }
+
         // File -> FileDto
         public static FileDto ToDto(this Shared.Entities.File entity)
         {
@@ -73,18 +118,28 @@ namespace Editlio.Shared.Helpers
             };
         }
 
-        // FileDto -> File
-        public static Shared.Entities.File ToEntity(this FileDto dto)
+        // FileCreateDto -> File
+        public static Shared.Entities.File ToEntity(this FileCreateDto dto)
         {
             return new Shared.Entities.File
             {
-                Id = dto.Id,
                 FileName = dto.FileName,
                 FilePath = dto.FilePath,
                 FileSize = dto.FileSize,
                 ContentType = dto.ContentType,
                 PageId = dto.PageId
             };
+        }
+
+        // FileUpdateDto -> File (Mevcut entity'yi güncellemek için)
+        public static  Shared.Entities.File ToEntity(this FileUpdateDto dto, Shared.Entities.File existingFile)
+        {
+            existingFile.FileName = dto.FileName;
+            existingFile.FilePath = dto.FilePath;
+            existingFile.FileSize = dto.FileSize;
+            existingFile.ContentType = dto.ContentType;
+            existingFile.PageId = dto.PageId;
+            return existingFile;
         }
 
         // RealTimeUpdate -> RealTimeUpdateDto
@@ -113,6 +168,61 @@ namespace Editlio.Shared.Helpers
             };
         }
 
+        // RealTimeUpdateCreateDto -> RealTimeUpdate
+        public static RealTimeUpdate ToEntity(this RealTimeUpdateCreateDto dto)
+        {
+            return new RealTimeUpdate
+            {
+                PageId = dto.PageId,
+                UpdatedBy = dto.UpdatedBy,
+                ChangeDescription = dto.ChangeDescription
+            };
+        }
+
+        // RealTimeUpdateUpdateDto -> RealTimeUpdate (Mevcut entity'yi güncellemek için)
+        public static RealTimeUpdate ToEntity(this RealTimeUpdateUpdateDto dto, RealTimeUpdate existingUpdate)
+        {
+            existingUpdate.PageId = dto.PageId;
+            existingUpdate.UpdatedBy = dto.UpdatedBy;
+            existingUpdate.ChangeDescription = dto.ChangeDescription;
+            return existingUpdate;
+        }
+
+        // RefreshToken -> RefreshTokenDto
+        public static RefreshTokenDto ToDto(this RefreshToken entity)
+        {
+            return new RefreshTokenDto
+            {
+                Id = entity.Id,
+                Token = entity.Token,
+                ExpiresAt = entity.ExpiresAt,
+                IsRevoked = entity.IsRevoked,
+                UserId = entity.UserId
+            };
+        }
+
+        // RefreshTokenCreateDto -> RefreshToken
+        public static RefreshToken ToEntity(this RefreshTokenCreateDto dto)
+        {
+            return new RefreshToken
+            {
+                Token = dto.Token,
+                ExpiresAt = dto.ExpiresAt,
+                IsRevoked = dto.IsRevoked,
+                UserId = dto.UserId
+            };
+        }
+
+        // RefreshTokenUpdateDto -> RefreshToken (Mevcut entity'yi güncellemek için)
+        public static RefreshToken ToEntity(this RefreshTokenUpdateDto dto, RefreshToken existingToken)
+        {
+            existingToken.Token = dto.Token;
+            existingToken.ExpiresAt = dto.ExpiresAt;
+            existingToken.IsRevoked = dto.IsRevoked;
+            existingToken.UserId = dto.UserId;
+            return existingToken;
+        }
+
         // List Conversion Helpers
         public static List<PageDto> ToDtoList(this IEnumerable<Page> entities)
         {
@@ -130,6 +240,11 @@ namespace Editlio.Shared.Helpers
         }
 
         public static List<RealTimeUpdateDto> ToDtoList(this IEnumerable<RealTimeUpdate> entities)
+        {
+            return entities.Select(e => e.ToDto()).ToList();
+        }
+
+        public static List<RefreshTokenDto> ToDtoList(this IEnumerable<RefreshToken> entities)
         {
             return entities.Select(e => e.ToDto()).ToList();
         }

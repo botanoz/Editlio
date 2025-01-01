@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Editlio.Shared.DTOs
+namespace Editlio.Shared.DTOs.RealTimeUpdate
 {
     public class RealTimeUpdateDto
     {

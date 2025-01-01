@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Editlio.Shared.DTOs.Page
 {
-    internal class PageUpdateDto
+    public class PageUpdateDto
     {
+        public int Id { get; set; }
+        public string Content { get; set; } = string.Empty;
+        public bool IsProtected { get; set; }
+        public string? Password { get; set; }
     }
 }
