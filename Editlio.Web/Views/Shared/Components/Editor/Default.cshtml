@@ -1,0 +1,255 @@
+﻿@model Editlio.Web.Models.PageViewModel
+
+<!-- 
+  Tam ekran alan:
+  display: flex; justify-content: center; align-items: center => #editor ortalanır
+  height: 100vh (Eğer Layout varsa, main {height: calc(100vh - 56px);} ve burayı %100 ayarlayabilirsin.)
+-->
+<div id="editor-container"
+     style="
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+     ">
+
+    <!-- Editor alanı:
+         - flex:1 -> yatayda esneyebilir
+         - max-width:90% -> kenarlardan %10 pay
+         - height:95% -> #editor-container'ın %95'i kadar yükseklik
+    -->
+    <div id="editor"
+         style="
+            flex: 1;
+            max-width: 90%;
+            height: 95%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+         ">
+    </div>
+</div>
+
+<!-- Durum / uyarı mesajları -->
+<small id="status" class="text-muted"></small>
+
+<!-- Gerekli Scriptler (SignalR + Monaco Editor) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
+
+<script>
+    console.log("[Editor] Script loaded. Slug:", "@Model.Slug");
+
+    // Razor Model'den gelen slug (ör. "a" vs.)
+    const pageSlug = "@Model.Slug" || "";
+
+    // Monaco Editor instance
+    let editor;
+    // Debounce timer
+    let typingTimer;
+
+    // SignalR bağlantısı => /hubs/page
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/hubs/page")
+        .build();
+
+    // Diğer kullanıcıların cursor dekorasyonları ve renkleri
+    const userCursors = {}; // { userId: monacoDecorationId[] }
+    const userColors = {};  // { userId: "#rrggbb" }
+
+    // Rastgele renk üretimi
+    function generateUserColor() {
+        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
+
+    // Sunucudan ilk içerik almak: /api/page/slug/{pageSlug}
+    // Dönüş formatı: { success: true, data: { id, slug, content, ... }, errors: [] }
+    async function loadInitialContent() {
+        try {
+            if (!pageSlug) {
+                console.warn("[Editor] No slug => skipping load content.");
+                document.getElementById("status").innerText = "No slug => no content loaded.";
+                return;
+            }
+
+            const url = `/api/page/slug/${pageSlug}`;
+            console.log("[Editor] GET:", url);
+
+            const response = await fetch(url);
+            if (!response.ok) {
+                console.error("[Editor] Not OK. Status:", response.status);
+                document.getElementById("status").innerText = "Failed to load content (HTTP " + response.status + ").";
+                return;
+            }
+
+            // result => { success: boolean, data: { id, slug, content, ... }, errors: string[] }
+            const result = await response.json();
+            if (result.success && result.data) {
+                const content = result.data.content || "";
+                editor.setValue(content);
+                document.getElementById("status").innerText = "Content loaded.";
+                console.log("[Editor] Content loaded from server:", content);
+            } else {
+                console.warn("[Editor] success=false or data missing", result);
+                document.getElementById("status").innerText = "Content not found or error.";
+            }
+        } catch (err) {
+            console.error("[Editor] Error loading content:", err);
+            document.getElementById("status").innerText = "Error loading content.";
+        }
+    }
+
+    // Monaco Editor AMD config
+    require.config({
+        paths: {
+            'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs'
+        }
+    });
+
+    require(["vs/editor/editor.main"], function () {
+        console.log("[Editor] Monaco require callback triggered.");
+
+        // Editörü oluştur
+        editor = monaco.editor.create(document.getElementById("editor"), {
+            value: "",
+            language: "plaintext",
+            theme: "vs-dark",
+            automaticLayout: true,
+            minimap: { enabled: true },
+            scrollbar: {
+                verticalScrollbarSize: 14,
+                horizontalScrollbarSize: 14,
+                arrowSize: 16
+            },
+            wordWrap: "on",
+            fontSize: 16,
+            lineNumbers: "on",
+            renderWhitespace: "boundary",
+            quickSuggestions: true,
+
+            // Ek konfor
+            smoothScrolling: true,
+            scrollBeyondLastLine: false
+        });
+
+        // Odak ver
+        editor.focus();
+        console.log("[Editor] Editor created. Now loading initial content...");
+
+        // API'den ilk content al
+        loadInitialContent();
+
+        // İçerik değiştiğinde => 500 ms debounce => UpdateContent(slug, content)
+        editor.onDidChangeModelContent(() => {
+            clearTimeout(typingTimer);
+            document.getElementById("status").innerText = "Saving...";
+
+            typingTimer = setTimeout(() => {
+                const newContent = editor.getValue();
+                console.log("[Editor] UpdateContent => slug:", pageSlug, ", content length:", newContent.length);
+
+                connection.invoke("UpdateContent", pageSlug, newContent)
+                    .then(() => {
+                        document.getElementById("status").innerText = "Changes saved.";
+                        console.log("[Editor] Content updated on server.");
+                    })
+                    .catch(err => {
+                        console.error("[Editor] Error sending content update:", err);
+                        document.getElementById("status").innerText = "Failed to save changes.";
+                    });
+            }, 500);
+        });
+
+        // Cursor değiştiğinde => UpdateCursor
+        editor.onDidChangeCursorPosition(() => {
+            const position = editor.getPosition();
+            connection.invoke("UpdateCursor", pageSlug, position)
+                .catch(err => {
+                    console.error("[Editor] Error sending cursor update:", err);
+                });
+        });
+    });
+
+    // SignalR bağlantısını başlat
+    connection.start()
+        .then(() => {
+            console.log("[Editor] Connected to SignalR hub.");
+            // Aynı slug ile group'a dahil ol
+            if (pageSlug) {
+                console.log("[Editor] JoinPage => slug:", pageSlug);
+                connection.invoke("JoinPage", pageSlug)
+                    .catch(err => {
+                        console.error("[Editor] JoinPage error:", err);
+                    });
+            } else {
+                console.warn("[Editor] pageSlug is empty => skipping JoinPage.");
+            }
+
+            // Diğer kullanıcıdan gelen içerik
+            connection.on("ReceiveContentUpdate", (updatedContent) => {
+                if (!editor) return;
+                const currentContent = editor.getValue();
+                if (currentContent !== updatedContent) {
+                    editor.setValue(updatedContent);
+                    document.getElementById("status").innerText = "Content updated by another user.";
+                    console.log("[Editor] External content update received.");
+                }
+            });
+
+            // Diğer kullanıcıların cursor hareketi
+            connection.on("ReceiveCursorUpdate", (userId, position) => {
+                if (!editor) return;
+
+                // Rastgele renk atama
+                if (!userColors[userId]) {
+                    userColors[userId] = generateUserColor();
+                    console.log(`[Editor] Assigned color ${userColors[userId]} to user ${userId}`);
+                }
+
+                const range = new monaco.Range(
+                    position.lineNumber,
+                    position.column,
+                    position.lineNumber,
+                    position.column
+                );
+
+                const decorationOptions = {
+                    range: range,
+                    options: {
+                        className: `user-cursor-${userId}`,
+                        hoverMessage: { value: `User: ${userId}` }
+                    }
+                };
+
+                if (!userCursors[userId]) {
+                    const decoration = editor.deltaDecorations([], [decorationOptions]);
+                    userCursors[userId] = decoration;
+                } else {
+                    editor.deltaDecorations(userCursors[userId], [decorationOptions]);
+                }
+            });
+        })
+        .catch(err => {
+            console.error("[Editor] Error connecting to SignalR hub:", err);
+            document.getElementById("status").innerText = "Real-time connection failed.";
+        });
+</script>
+
+<style>
+    /* Editör gölgesi vb. */
+    #editor {
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /*
+      Cursorlar .user-cursor-{ConnectionId}
+      Basitçe kırmızı (#ff0000). 
+      userColors dict'de her user'a farklı renk var ama 
+      apply etme kısmını advanced approach ile yapabilirsin.
+    */
+    .user-cursor {
+        width: 2px;
+        background-color: #ff0000;
+        position: absolute;
+    }
+</style>
