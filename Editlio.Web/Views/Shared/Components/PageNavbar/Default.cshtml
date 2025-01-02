@@ -1,0 +1,254 @@
+﻿<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-edit me-2"></i>Editlio
+            </a>
+
+            <ul class="navbar-nav d-none d-lg-flex">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">
+                        <i class="fas fa-home me-1"></i>Anasayfa
+                    </a>
+                </li>
+            </ul>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item d-lg-none">
+                        <a class="nav-link" aria-current="page" href="/">
+                            <i class="fas fa-home me-1"></i>Anasayfa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link" data-bs-toggle="modal" data-bs-target="#fileManagementModal">
+                            <i class="fas fa-folder me-1"></i>Dosya Yönetimi
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link" data-bs-toggle="modal" data-bs-target="#shortcutsModal">
+                            <i class="fas fa-keyboard me-1"></i>Editör Kısayolları
+                        </button>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link active btn btn-link text-white bg-warning" href="https://buymeacoffee.com/botanoz" target="_blank">
+                            <i class="fas fa-coffee me-1"></i>Bana bi' Kahve Ismarla
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- File Management Modal -->
+<div class="modal fade" id="fileManagementModal" tabindex="-1" aria-labelledby="fileManagementModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="fileManagementModalLabel">
+                    <i class="fas fa-folder-open me-2"></i>Dosya Yönetimi
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-section mb-4">
+                    <div class="mb-3">
+                        <label for="fileInput" class="form-label">
+                            <i class="fas fa-upload me-2"></i>Upload Files
+                        </label>
+                        <input type="file" class="form-control" id="fileInput" multiple>
+                    </div>
+                    <button type="button" class="btn btn-dark" id="uploadFilesBtn">
+                        <i class="fas fa-cloud-upload-alt me-2"></i>Yükle
+                    </button>
+                </div>
+                <div class="recent-files">
+                    <h6><i class="fas fa-history me-2"></i>Recent Files</h6>
+                    <div class="list-group">
+                 
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    <i class="fas fa-file-alt me-2"></i>Name
+                                </span>
+                                <div class="btn-group">
+                                    <a href="DownloadUrl" class="btn btn-outline-dark btn-sm">
+                                        <i class="fas fa-download me-1"></i>İndir
+                                    </a>
+                                </div>
+                            </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="shortcutsModal" tabindex="-1" aria-labelledby="shortcutsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="shortcutsModalLabel">
+                    <i class="fas fa-keyboard me-2"></i>Editör Kısayolları
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion" id="shortcutsAccordion">
+                    <!-- Temel Arama ve Düzenleme -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#searchSection">
+                                <i class="fas fa-search me-2"></i>Arama ve Temel Düzenleme
+                            </button>
+                        </h2>
+                        <div id="searchSection" class="accordion-collapse collapse show" data-bs-parent="#shortcutsAccordion">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <td><kbd>F2</kbd></td>
+                                                <td>Metin Ara</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>Shift</kbd> + <kbd>F2</kbd></td>
+                                                <td>Bul ve Değiştir</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>F3</kbd></td>
+                                                <td>Sonrakini Bul</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>Shift</kbd> + <kbd>F3</kbd></td>
+                                                <td>Öncekini Bul</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>F4</kbd></td>
+                                                <td>Otomatik Tamamlama</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Görünüm Ayarları -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#viewSection">
+                                <i class="fas fa-eye me-2"></i>Görünüm Ayarları
+                            </button>
+                        </h2>
+                        <div id="viewSection" class="accordion-collapse collapse" data-bs-parent="#shortcutsAccordion">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <td><kbd>F6</kbd></td>
+                                                <td>Satır Kaydırma Aç/Kapat</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>F7</kbd></td>
+                                                <td>Satır Numaralarını Aç/Kapat</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>F8</kbd></td>
+                                                <td>Aktif Satır Vurgulamayı Aç/Kapat</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>F12</kbd></td>
+                                                <td>Tam Ekran Modu</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>Esc</kbd></td>
+                                                <td>Tam Ekrandan Çık</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gelişmiş Düzenleme -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#editingSection">
+                                <i class="fas fa-edit me-2"></i>Gelişmiş Düzenleme
+                            </button>
+                        </h2>
+                        <div id="editingSection" class="accordion-collapse collapse" data-bs-parent="#shortcutsAccordion">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <td><kbd>Shift</kbd> + <kbd>F4</kbd></td>
+                                                <td>Satırı Çoğalt</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>Shift</kbd> + <kbd>F5</kbd></td>
+                                                <td>Satırı Sil</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>Shift</kbd> + <kbd>F6</kbd></td>
+                                                <td>Yorum Satırı Yap/Kaldır</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>Shift</kbd> + <kbd>F7</kbd></td>
+                                                <td>Otomatik Girinti</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>Shift</kbd> + <kbd>F8</kbd></td>
+                                                <td>Büyük Harfe Çevir</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>Shift</kbd> + <kbd>F9</kbd></td>
+                                                <td>Küçük Harfe Çevir</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Girinti İşlemleri -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#indentSection">
+                                <i class="fas fa-indent me-2"></i>Girinti İşlemleri
+                            </button>
+                        </h2>
+                        <div id="indentSection" class="accordion-collapse collapse" data-bs-parent="#shortcutsAccordion">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <td><kbd>Tab</kbd></td>
+                                                <td>Girinti Ekle veya Boşluk Bırak</td>
+                                            </tr>
+                                            <tr>
+                                                <td><kbd>Shift</kbd> + <kbd>Tab</kbd></td>
+                                                <td>Girintiyi Azalt</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

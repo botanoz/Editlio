@@ -1,17 +1,20 @@
-﻿@model Editlio.Web.Models.PageViewModel
-
-<!-- CodeMirror CSS -->
+﻿<!-- CodeMirror CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/codemirror.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/theme/dracula.min.css" />
-<!-- Eklenti CSS'leri -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/fold/foldgutter.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/hint/show-hint.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/dialog/dialog.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/scroll/simplescrollbars.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/display/fullscreen.css" />
 
 <style>
     .CodeMirror {
         height: calc(100vh - 56px);
         font-size: 15px;
+    }
+
+    .CodeMirror-fullscreen {
+        z-index: 9999;
     }
 </style>
 
@@ -20,57 +23,134 @@
 <!-- CodeMirror ve Eklentiler -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/edit/closebrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/edit/closetag.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/selection/active-line.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/fold/foldcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/fold/foldgutter.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/fold/brace-fold.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/fold/xml-fold.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/hint/show-hint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/hint/javascript-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/hint/xml-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/hint/html-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/hint/css-hint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/search/search.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/search/searchcursor.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/dialog/dialog.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/scroll/simplescrollbars.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/display/fullscreen.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/comment/comment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/addon/edit/matchtags.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.0/dist/browser/signalr.min.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const slug = "@Model.Slug";
 
-        // SignalR bağlantısını başlat
+        // SignalR bağlantısı aynı şekilde korundu
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("https://localhost:7273/hubs/realtime")
             .withAutomaticReconnect()
             .build();
 
-        // CodeMirror editörü başlat
+        // CodeMirror editörü - Yeni kısayol kombinasyonları ile
         const editor = CodeMirror(document.getElementById("editor-container"), {
             value: `@Html.Raw(Model.Content)`,
             mode: "javascript",
             theme: "dracula",
             lineNumbers: true,
             autoCloseBrackets: true,
-            matchBrackets: true,        // Parantezleri eşleştirme
-            styleActiveLine: true,      // Aktif satırı vurgulama
-            lineWrapping: true,         // Uzun satırları kaydırma
-            foldGutter: true,           // Kod katlama
+            matchBrackets: true,
+            styleActiveLine: true,
+            lineWrapping: true,
+            foldGutter: true,
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-            tabSize: 2,                 // Tab genişliği
-            indentWithTabs: false,      // Space ile girinti
+            tabSize: 2,
+            indentWithTabs: false,
+            autoCloseTags: true,
+            matchTags: { bothTags: true },
+            scrollbarStyle: "overlay",
             extraKeys: {
-                "Ctrl-Space": "autocomplete",  // Otomatik tamamlama
-                "Ctrl-F": "find",             // Arama
-                "Ctrl-H": "replace",          // Değiştirme
-                "Alt-F": "findPersistent",    // Sürekli arama
-                "Ctrl-/": function (cm) {      // Yorum satırı
+                // Temel düzenleme kısayolları
+                "F2": "find",                      // Arama
+                "Shift-F2": "replace",             // Değiştirme
+                "F3": "findNext",                  // Sonrakini bul
+                "Shift-F3": "findPrev",            // Öncekini bul
+                "F4": function (cm) {               // Otomatik tamamlama
+                    CodeMirror.commands.autocomplete(cm, null, { completeSingle: false });
+                },
+
+                // Görünüm kontrolleri
+                "F6": function (cm) {               // Satır kaydırma
+                    cm.setOption("lineWrapping", !cm.getOption("lineWrapping"));
+                },
+                "F7": function (cm) {               // Satır numaraları
+                    cm.setOption("lineNumbers", !cm.getOption("lineNumbers"));
+                },
+                "F8": function (cm) {               // Aktif satır vurgusu
+                    cm.setOption("styleActiveLine", !cm.getOption("styleActiveLine"));
+                },
+
+                // Düzenleme işlemleri
+                "Shift-F4": function (cm) {         // Satırı kopyala
+                    const line = cm.getCursor().line;
+                    const content = cm.getLine(line);
+                    cm.replaceRange(content + "\n", { line: line, ch: 0 });
+                },
+                "Shift-F5": function (cm) {         // Satırı sil
+                    const line = cm.getCursor().line;
+                    cm.replaceRange("",
+                        { line: line, ch: 0 },
+                        { line: line + 1, ch: 0 }
+                    );
+                },
+
+                // Kod formatlama
+                "Shift-F6": function (cm) {         // Yorum satırı
                     cm.toggleComment();
                 },
-                "Ctrl-J": "toMatchingTag",    // Eşleşen taga git
-                "Tab": function (cm) {         // Tab tuşu davranışı
+                "Shift-F7": function (cm) {         // Kodu girintile
+                    cm.execCommand("indentAuto");
+                },
+
+                // Özel işlemler
+                "Shift-F8": function (cm) {         // Seçili metni büyük harf yap
+                    if (cm.somethingSelected()) {
+                        const selection = cm.getSelection();
+                        cm.replaceSelection(selection.toUpperCase());
+                    }
+                },
+                "Shift-F9": function (cm) {         // Seçili metni küçük harf yap
+                    if (cm.somethingSelected()) {
+                        const selection = cm.getSelection();
+                        cm.replaceSelection(selection.toLowerCase());
+                    }
+                },
+
+                // Tab yönetimi
+                "Tab": function (cm) {
                     if (cm.somethingSelected()) {
                         cm.indentSelection("add");
                     } else {
-                        cm.replaceSelection("  ", "end");
+                        cm.replaceSelection("  ");
+                    }
+                },
+                "Shift-Tab": function (cm) {
+                    cm.indentSelection("subtract");
+                },
+
+                // Ekstra özellikler
+                "F12": function (cm) {              // Tam ekran modu
+                    cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                },
+                "Esc": function (cm) {
+                    if (cm.getOption("fullScreen")) {
+                        cm.setOption("fullScreen", false);
                     }
                 }
             }
@@ -78,9 +158,16 @@
 
         // Otomatik tamamlama için olay dinleyici
         editor.on("keyup", function (cm, event) {
-            if (!cm.state.completionActive &&
-                event.keyCode > 64 && event.keyCode < 91) {
-                CodeMirror.commands.autocomplete(cm, null, { completeSingle: false });
+            // F4'e basılmadığında ve bir harf yazıldığında
+            if (event.keyCode !== 115 && !cm.state.completionActive &&
+                event.keyCode >= 65 && event.keyCode <= 90) {
+                setTimeout(() => {
+                    const cursor = cm.getCursor();
+                    const token = cm.getTokenAt(cursor);
+                    if (token.string.length > 2) {  // En az 3 karakter yazıldığında
+                        CodeMirror.commands.autocomplete(cm, null, { completeSingle: false });
+                    }
+                }, 150);
             }
         });
 
@@ -108,7 +195,7 @@
                         const updatedContent = editor.getValue();
                         connection.invoke("UpdatePageContent", slug, updatedContent)
                             .catch(err => console.error("Error updating content:", err));
-                    }, 300);
+                    }, 20);
                 });
             })
             .catch(err => console.error("SignalR connection failed:", err));

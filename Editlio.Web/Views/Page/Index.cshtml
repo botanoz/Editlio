@@ -1,4 +1,6 @@
 ﻿@model Editlio.Web.Models.PageViewModel
+@{
+    Layout = "~/Views/Shared/_PageLayout.cshtml";
+}
 
-
-    @await Component.InvokeAsync("Editor", new { model = Model })
+@await Component.InvokeAsync("Editor", new { model = Model })
