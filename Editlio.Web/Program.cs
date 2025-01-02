@@ -1,6 +1,6 @@
-
 using Editlio.Web.Services.Abstracts;
 using Editlio.Web.Services.Concretes;
+using Editlio.Web.Constraints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +10,7 @@ builder.Services.AddControllersWithViews();
 // Add SignalR
 builder.Services.AddSignalR();
 
-// Base API URL ayarýný al ve doðrula
+// Configure API Base URL
 var apiBaseAddress = builder.Configuration.GetSection("ApiSettings:BaseUrl").Value;
 
 if (string.IsNullOrEmpty(apiBaseAddress))
@@ -18,7 +18,7 @@ if (string.IsNullOrEmpty(apiBaseAddress))
     throw new InvalidOperationException("API BaseUrl is not configured in appsettings.json.");
 }
 
-// HttpClient servislerini BaseAddress ile ekle
+// Add HttpClient services with BaseAddress
 builder.Services.AddHttpClient<IUserService, UserService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseAddress);
@@ -34,7 +34,13 @@ builder.Services.AddHttpClient<IFileService, FileService>(client =>
     client.BaseAddress = new Uri(apiBaseAddress);
 });
 
-// CORS ayarlarý
+// Add custom route constraint
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.ConstraintMap.Add("slug", typeof(SlugConstraint));
+});
+
+// Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -47,7 +53,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Middleware yapýlandýrmasý
+// Configure middleware pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -63,10 +69,14 @@ app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
-
+// Configure route mappings
+app.MapControllerRoute(
+    name: "PageRoute",
+    pattern: "{slug:slug}",
+    defaults: new { controller = "Page", action = "Index" });
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Page}/{action=Index}/{id?}");
+    name: "Default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

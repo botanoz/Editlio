@@ -1,8 +1,59 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Editlio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Sayfa içeriği koyu temada tasarlandığı için
+     text-light, bg-dark vb. Bootstrap sınıfları kullanıldı. -->
+
+<div class="container-fluid bg-dark text-light min-vh-100 d-flex flex-column justify-content-center align-items-center" style="padding-top: 80px; padding-bottom: 80px;">
+    <!-- Başlık ve kısa açıklama alanı -->
+    <div class="text-center">
+        <h1 class="display-4 mb-3" style="font-weight: 700;">Editlio v0.5</h1>
+        <p class="lead" style="max-width: 600px; margin: 0 auto;">
+            Karanlık temada tasarlanmış, gerçek zamanlı kod ve metin paylaşım platformu.
+            Anlık işbirliği, dosya paylaşımı, eş zamanlı düzenleme ve daha fazlası.
+        </p>
+    </div>
+
+    <!-- Paylaşmaya Başla Butonu -->
+    <div class="mt-4">
+        <!-- Aşağıdaki ActionLink veya normal <a> tag'ini isteğinize göre düzenleyebilirsiniz. -->
+        @* @Html.ActionLink("Paylaşmaya Başla", "Editor", "Home", null, new { @class = "btn btn-primary btn-lg" }) *@
+        <a href="@Url.Action("Editor", "Home")" class="btn btn-primary btn-lg px-5 py-3" style="font-size: 1.2rem;">
+            Paylaşmaya Başla
+        </a>
+    </div>
+
+    <!-- Özellikler Bölümü -->
+    <div class="mt-5 text-left" style="max-width: 800px;">
+        <hr class="border-secondary">
+        <h2 class="h4 mb-3">Özellikler</h2>
+        <ul class="list-unstyled">
+            <li class="mb-2">
+                <span class="fw-bold">• Benzersiz URL ile sayfa oluşturma:</span>
+                <em>`/12345` veya `/abcd1` gibi özel bağlantılar kullanarak kendi editör sayfanı oluştur.</em>
+            </li>
+            <li class="mb-2">
+                <span class="fw-bold">• Gerçek zamanlı düzenleme (SignalR):</span>
+                <em>Diğer kullanıcılarla eş zamanlı olarak aynı kod üzerinde çalış, anlık değişimleri paylaş.</em>
+            </li>
+            <li class="mb-2">
+                <span class="fw-bold">• Modern kod editörü (Monaco Editor):</span>
+                <em>Dil vurgulama, IntelliSense gibi gelişmiş özelliklerle kodunu düzenle.</em>
+            </li>
+            <li class="mb-2">
+                <span class="fw-bold">• Dosya ve görsel yükleme:</span>
+                <em>Paylaşmak istediğin dosyaları hızlıca ekle, gerekirse diğer katılımcılarla birlikte düzenle.</em>
+            </li>
+            <li class="mb-2">
+                <span class="fw-bold">• Şifre korumalı sayfalar:</span>
+                <em>Üye olarak oluşturduğun sayfalarına şifre koyabilir, sadece okuma veya düzenleme izni verebilirsin.</em>
+            </li>
+            <li class="mb-2">
+                <span class="fw-bold">• Eş zamanlı düzenleme:</span>
+                <em>Birden fazla kullanıcı aynı anda bir sayfayı düzenleyebilir, yapılan değişiklikleri anında görebilir.</em>
+            </li>
+        </ul>
+        <hr class="border-secondary">
+    </div>
 </div>
