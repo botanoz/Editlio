@@ -26,7 +26,7 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 # 🔹 Docker ortamında tüm IP'lerden erişilebilecek şekilde ayarla
-ENV ASPNETCORE_URLS=http://0.0.0.0:80
+ENV ASPNETCORE_URLS=http://localhost:80
 
 # ✅ Konteyner çalıştığında uygulamanın başlatılması
 ENTRYPOINT ["dotnet", "Editlio.Web.dll"]

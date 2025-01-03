@@ -7,13 +7,17 @@ services:
       dockerfile: Editlio.Web/Dockerfile
     ports:
       - "8080:80"
+      - "8443:443"  
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_API_URL=http://api:7273
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=EditlioDb;User=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;
+      - ASPNETCORE_API_URL=https://localhost:7273
+      - ASPNETCORE_URLS=http://localhost:80;https://localhost:443
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=EditlioDb;User=sa;Password=MssqlSecure#123;TrustServerCertificate=True;Encrypt=False;
     depends_on:
-      - api
-      - mssql
+      mssql:
+        condition: service_healthy
+      api:
+        condition: service_healthy
     networks:
       - editlio-network
 
@@ -23,11 +27,14 @@ services:
       dockerfile: Editlio.Api/Dockerfile
     ports:
       - "7273:7273"
+      - "7443:443"  
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=EditlioDb;User=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;
+      - ASPNETCORE_URLS=http://localhost:7273;https://localhost:443
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=EditlioDb;User=sa;Password=MssqlSecure#123;TrustServerCertificate=True;Encrypt=False;
     depends_on:
-      - mssql
+      mssql:
+        condition: service_healthy
     networks:
       - editlio-network
 
@@ -37,12 +44,23 @@ services:
     ports:
       - "1433:1433"
     environment:
-      SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
+      SA_PASSWORD: "MssqlSecure#123"
       ACCEPT_EULA: "Y"
     networks:
       - editlio-network
+    volumes:
+      - mssql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "sqlcmd -U sa -P MssqlSecure#123 -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      retries: 3
+      start_period: 30s
 
 networks:
   editlio-network:
     driver: bridge
     name: editlio-network
+
+volumes:
+  mssql_data:
+    driver: local

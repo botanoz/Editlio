@@ -5,7 +5,7 @@ using Editlio.Web.Constraints;
 var builder = WebApplication.CreateBuilder(args);
 
 // Set URL for Docker compatibility
-builder.WebHost.UseUrls("http://0.0.0.0:80");
+builder.WebHost.UseUrls("https://localhost:80");
 
 // Add services to the container
 builder.Services.AddControllersWithViews();
@@ -14,12 +14,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
 // Configure API Base URL (Read from Environment Variable or appsettings.json)
-var apiBaseAddress = builder.Configuration.GetSection("ApiSettings:BaseUrl").Value
-                     ?? Environment.GetEnvironmentVariable("ASPNETCORE_API_URL");
+var apiBaseAddress = Environment.GetEnvironmentVariable("ASPNETCORE_API_URL")
+                     ?? builder.Configuration.GetValue<string>("ApiSettings:BaseUrl");
 
 if (string.IsNullOrEmpty(apiBaseAddress))
 {
-    throw new InvalidOperationException("API BaseUrl is not configured in appsettings.json or environment variables.");
+    throw new InvalidOperationException("API BaseUrl is not configured in environment variables or appsettings.json.");
 }
 
 // Add HttpClient services with BaseAddress

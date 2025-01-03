@@ -6,15 +6,15 @@ using Editlio.Api.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Docker'da API'nin 7273 portunda çalýþmasýný saðla
-builder.WebHost.UseUrls("http://0.0.0.0:7273");
+builder.WebHost.UseUrls("https://localhost:7273");
 
 // Baðlantý dizesini al ve kontrol et (Önce environment deðiþkenine bak)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                     ?? Environment.GetEnvironmentVariable("ASPNETCORE_DB_CONNECTION");
+var connectionString = Environment.GetEnvironmentVariable("ASPNETCORE_DB_CONNECTION")
+                     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json or environment variables.");
+    throw new InvalidOperationException("Connection string 'DefaultConnection' not found in environment variables or appsettings.json.");
 }
 
 // Servisleri ekle
