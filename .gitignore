@@ -31,9 +31,7 @@ logs/
 # Rider
 .idea/
 
-# Config files
-appsettings.*.json
-appsettings.json
+
 
 # DotNet Tools
 .dotnet/
