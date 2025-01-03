@@ -1,55 +1,39 @@
+using Editlio.Web.Constraints;
 using Editlio.Web.Services.Abstracts;
 using Editlio.Web.Services.Concretes;
-using Editlio.Web.Constraints;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Set URL for Docker compatibility
-builder.WebHost.UseUrls("https://localhost:80");
-
-// Add services to the container
+// Basic service configurations
 builder.Services.AddControllersWithViews();
-
-// Add SignalR
 builder.Services.AddSignalR();
+builder.Services.AddHealthChecks();
 
-// Configure API Base URL (Read from Environment Variable or appsettings.json)
-var apiBaseAddress = Environment.GetEnvironmentVariable("ASPNETCORE_API_URL")
-                     ?? builder.Configuration.GetValue<string>("ApiSettings:BaseUrl");
+// Get API base address from configuration
+var apiBaseAddress = builder.Configuration.GetValue<string>("ApiSettings:BaseUrl")
+    ?? Environment.GetEnvironmentVariable("API_URL")
+    ?? throw new InvalidOperationException("API URL not configured");
 
-if (string.IsNullOrEmpty(apiBaseAddress))
-{
-    throw new InvalidOperationException("API BaseUrl is not configured in environment variables or appsettings.json.");
-}
-
-// Add HttpClient services with BaseAddress
+// Register HTTP clients for services
 builder.Services.AddHttpClient<IUserService, UserService>(client =>
-{
-    client.BaseAddress = new Uri(apiBaseAddress);
-});
-
+    client.BaseAddress = new Uri(apiBaseAddress));
 builder.Services.AddHttpClient<IPageService, PageService>(client =>
-{
-    client.BaseAddress = new Uri(apiBaseAddress);
-});
-
+    client.BaseAddress = new Uri(apiBaseAddress));
 builder.Services.AddHttpClient<IFileService, FileService>(client =>
-{
-    client.BaseAddress = new Uri(apiBaseAddress);
-});
+    client.BaseAddress = new Uri(apiBaseAddress));
 
-// Add custom route constraint
+// Configure route constraints
 builder.Services.Configure<RouteOptions>(options =>
-{
-    options.ConstraintMap.Add("slug", typeof(SlugConstraint));
-});
+    options.ConstraintMap.Add("slug", typeof(SlugConstraint)));
 
-// Configure CORS (Allow API Calls from Docker Network)
+// Configure CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins(apiBaseAddress)
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -57,30 +41,43 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure middleware pipeline
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
-app.UseCors("AllowAll");
-
+app.UseCors();
 app.UseAuthorization();
 
-// Configure route mappings
+// Configure health checks
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        await context.Response.WriteAsJsonAsync(new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(e => new
+            {
+                name = e.Key,
+                status = e.Value.Status.ToString()
+            })
+        });
+    }
+});
+
+// Configure routes
 app.MapControllerRoute(
     name: "PageRoute",
     pattern: "{slug:slug}",
     defaults: new { controller = "Page", action = "Index" });
 
 app.MapControllerRoute(
-    name: "Default",
+    name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

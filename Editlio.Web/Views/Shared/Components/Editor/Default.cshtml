@@ -54,7 +54,7 @@
 
         // SignalR bağlantısı aynı şekilde korundu
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7273/hubs/realtime")
+            .withUrl("http://localhost:5001/hubs/realtime")
             .withAutomaticReconnect()
             .build();
 

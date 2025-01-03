@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Çözüm Öğeleri", "Çöz
 		.env = .env
 		.gitignore = .gitignore
 		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
