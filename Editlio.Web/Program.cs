@@ -4,18 +4,22 @@ using Editlio.Web.Constraints;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Set URL for Docker compatibility
+builder.WebHost.UseUrls("http://0.0.0.0:80");
+
 // Add services to the container
 builder.Services.AddControllersWithViews();
 
 // Add SignalR
 builder.Services.AddSignalR();
 
-// Configure API Base URL
-var apiBaseAddress = builder.Configuration.GetSection("ApiSettings:BaseUrl").Value;
+// Configure API Base URL (Read from Environment Variable or appsettings.json)
+var apiBaseAddress = builder.Configuration.GetSection("ApiSettings:BaseUrl").Value
+                     ?? Environment.GetEnvironmentVariable("ASPNETCORE_API_URL");
 
 if (string.IsNullOrEmpty(apiBaseAddress))
 {
-    throw new InvalidOperationException("API BaseUrl is not configured in appsettings.json.");
+    throw new InvalidOperationException("API BaseUrl is not configured in appsettings.json or environment variables.");
 }
 
 // Add HttpClient services with BaseAddress
@@ -40,7 +44,7 @@ builder.Services.Configure<RouteOptions>(options =>
     options.ConstraintMap.Add("slug", typeof(SlugConstraint));
 });
 
-// Configure CORS
+// Configure CORS (Allow API Calls from Docker Network)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
