@@ -12,7 +12,10 @@ services:
       - ASPNETCORE_API_URL=http://api:7273
       - ConnectionStrings__DefaultConnection=Server=mssql;Database=EditlioDb;User=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;
     depends_on:
+      - api
       - mssql
+    networks:
+      - editlio-network
 
   api:
     build:
@@ -25,6 +28,8 @@ services:
       - ConnectionStrings__DefaultConnection=Server=mssql;Database=EditlioDb;User=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;
     depends_on:
       - mssql
+    networks:
+      - editlio-network
 
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -34,3 +39,10 @@ services:
     environment:
       SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
       ACCEPT_EULA: "Y"
+    networks:
+      - editlio-network
+
+networks:
+  editlio-network:
+    driver: bridge
+    name: editlio-network
