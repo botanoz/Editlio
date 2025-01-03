@@ -2,6 +2,7 @@
 using Editlio.Web.Services.Abstracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Configuration;
 
 namespace Editlio.Web.Controllers
 {
@@ -11,14 +12,14 @@ namespace Editlio.Web.Controllers
         private readonly IUserService _userService;
         private readonly HubConnection _hubConnection;
 
-        public PageController(IPageService pageService, IUserService userService)
+        public PageController(IPageService pageService, IUserService userService, IConfiguration configuration)
         {
             _pageService = pageService;
             _userService = userService;
-
+            string hubUrl = configuration["AppSettings:RealtimeHubUrl"] ?? throw new ArgumentNullException("RealtimeHubUrl is missing from configuration.");
             // SignalR bağlantısını başlat
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl("https://localhost:7273/hubs/realtime") // Backend API SignalR Hub URL
+                .WithUrl(hubUrl) // Backend API SignalR Hub URL
                 .WithAutomaticReconnect() // Otomatik yeniden bağlanma
                 .Build();
         }

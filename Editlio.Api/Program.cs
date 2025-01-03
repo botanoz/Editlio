@@ -2,34 +2,26 @@ using Editlio.Domain;
 using Editlio.Infrastructure;
 using Editlio.Api.Hubs;
 using Editlio.Api.Middleware;
+using Microsoft.EntityFrameworkCore;
+using Editlio.Infrastructure.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Docker'da API'nin 7273 portunda çalýþmasýný saðla
-builder.WebHost.UseUrls("http://0.0.0.0:7273");
-
-// Baðlantý dizesini al ve kontrol et (Önce environment deðiþkenine bak)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                     ?? Environment.GetEnvironmentVariable("ASPNETCORE_DB_CONNECTION");
-
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json or environment variables.");
-}
-
-// Servisleri ekle
-builder.Services.AddDataLayer(connectionString);
-builder.Services.AddBusinessLayer();
+// Configure services
 builder.Services.AddControllers();
-
-// SignalR için ekleme
 builder.Services.AddSignalR();
-
-// Swagger/OpenAPI desteði
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// CORS politikasý ekle (Docker içinden eriþime izin ver)
+// Get connection string from environment or configuration
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+// Add data and business layers
+builder.Services.AddDataLayer(connectionString);
+builder.Services.AddBusinessLayer();
+
+// Configure CORS for Docker environment
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -37,29 +29,42 @@ builder.Services.AddCors(options =>
         policy.AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials()
-              .SetIsOriginAllowed(origin => true); // Docker için tüm originlere izin ver
+              .SetIsOriginAllowed(_ => true);
     });
 });
 
 var app = builder.Build();
 
-// Swagger konfigürasyonu
-if (app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("ENABLE_SWAGGER") == "true")
+// Apply database migrations
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+        throw;
+    }
+}
+
+// Configure middleware pipeline
+if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("EnableSwagger"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Middleware konfigürasyonu
-app.UseHttpsRedirection();
-app.UseCors();
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors();
 
-// Routing ve Authorization sýrasý
 app.UseRouting();
 app.UseAuthorization();
 
-// SignalR ve API rotalarý
+// Configure endpoints
 app.MapControllers();
 app.MapHub<RealTimeHub>("/hubs/realtime");
 

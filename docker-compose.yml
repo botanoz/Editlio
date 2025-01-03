@@ -4,33 +4,50 @@ services:
   web:
     build:
       context: .
-      dockerfile: Editlio.Web/Dockerfile
+      target: web
     ports:
-      - "8080:80"
+      - "5000:5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_API_URL=http://api:7273
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=EditlioDb;User=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Server=db;Database=EditlioDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
+      - ApiSettings__BaseUrl=http://api:5001
+      - AppSettings__RealtimeHubUrl=http://api:5001/hubs/realtime
     depends_on:
-      - mssql
+      - db
+    networks:
+      - editlio-network
 
   api:
     build:
       context: .
-      dockerfile: Editlio.Api/Dockerfile
+      target: api
     ports:
-      - "7273:7273"
+      - "5001:5001"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=EditlioDb;User=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;
+      - ConnectionStrings__DefaultConnection=Server=db;Database=EditlioDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
     depends_on:
-      - mssql
+      - db
+    networks:
+      - editlio-network
 
-  mssql:
+  db:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: mssql-container
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD}
+      - MSSQL_PID=Express
     ports:
       - "1433:1433"
-    environment:
-      SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
-      ACCEPT_EULA: "Y"
+    volumes:
+      - sqldata:/var/opt/mssql
+    networks:
+      - editlio-network
+
+networks:
+  editlio-network:
+    driver: bridge
+
+volumes:
+  sqldata:
