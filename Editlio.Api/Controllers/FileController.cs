@@ -1,4 +1,5 @@
 ﻿using Editlio.Domain.Services.Abstracts;
+using Editlio.Domain.Services.Concretes;
 using Editlio.Shared.DTOs.File;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace Editlio.Api.Controllers
     public class FileController : ControllerBase
     {
         private readonly IFileService _fileService;
+        private readonly IPageService _pageService;
 
-        public FileController(IFileService fileService)
+        public FileController(IFileService fileService, IPageService pageService)
         {
             _fileService = fileService;
+            _pageService = pageService;
         }
 
         [HttpPost]
@@ -34,6 +37,25 @@ namespace Editlio.Api.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _fileService.GetFileByIdAsync(id);
+            return result.Success ? Ok(result) : NotFound(result);
+        }
+        [HttpGet("Pageid/{id}")]
+        public async Task<IActionResult> GetByPageId(int id)
+        {
+            var result = await _fileService.GetFilesByPageIdAsync(id);
+            return result.Success ? Ok(result) : NotFound(result);
+        }
+        [HttpGet("Slug/{slug}")]
+        public async Task<IActionResult> GetBySlug(string slug)
+        {
+            var data = await _pageService.GetPageBySlugAsync(slug);
+            var result = await _fileService.GetFilesByPageIdAsync(data.Data.Id);
+            return result.Success ? Ok(result) : NotFound(result);
+        }
+        [HttpDelete("file/{id}")]
+        public async Task<IActionResult> DeleteFileById(int id)
+        {
+            var result = await _fileService.DeleteFileAsync(id);
             return result.Success ? Ok(result) : NotFound(result);
         }
     }

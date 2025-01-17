@@ -1,59 +1,108 @@
 ﻿@{
-    ViewData["Title"] = "Editlio";
+    ViewData["Title"] = "Ana Sayfa";
 }
 
-<!-- Sayfa içeriği koyu temada tasarlandığı için
-     text-light, bg-dark vb. Bootstrap sınıfları kullanıldı. -->
-
-<div class="container-fluid bg-dark text-light min-vh-100 d-flex flex-column justify-content-center align-items-center" style="padding-top: 80px; padding-bottom: 80px;">
-    <!-- Başlık ve kısa açıklama alanı -->
-    <div class="text-center">
-        <h1 class="display-4 mb-3" style="font-weight: 700;">Editlio v0.5</h1>
-        <p class="lead" style="max-width: 600px; margin: 0 auto;">
-            Karanlık temada tasarlanmış, gerçek zamanlı kod ve metin paylaşım platformu.
-            Anlık işbirliği, dosya paylaşımı, eş zamanlı düzenleme ve daha fazlası.
-        </p>
+<!-- Hero Section -->
+<div class="pt-28 pb-16 gradient-bg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 data-aos="fade-down" class="text-5xl md:text-6xl font-bold text-purple-300 mb-8 neon-glow">
+                Kodunuzu & Metninizi<br />Anında Paylaşın!
+            </h1>
+            <p data-aos="fade-up" class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+                URL'yi özelleştirin veya rastgele oluşturun.
+                Tarayıcınıza <span class="font-mono bg-purple-900/30 px-2 py-1 rounded text-purple-300">editlio.com/istediginiz-metin</span> yazın,
+                anında paylaşıma başlayın!
+            </p>
+            <div data-aos="zoom-in" class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="/generate-slug" class="px-8 py-4 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 transition-all hover:scale-105 shadow-lg shadow-purple-600/50">
+                    Hemen Paylaşıma Başla →
+                </a>
+            </div>
+        </div>
     </div>
+</div>
 
-    <!-- Paylaşmaya Başla Butonu -->
-    <div class="mt-4">
-        <!-- Aşağıdaki ActionLink veya normal <a> tag'ini isteğinize göre düzenleyebilirsiniz. -->
-        @* @Html.ActionLink("Paylaşmaya Başla", "Editor", "Home", null, new { @class = "btn btn-primary btn-lg" }) *@
-        <a href="@Url.Action("Editor", "Home")" class="btn btn-primary btn-lg px-5 py-3" style="font-size: 1.2rem;">
-            Paylaşmaya Başla
-        </a>
+<!-- Features -->
+<div class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div data-aos="fade-up" class="bg-gray-800/50 p-8 rounded-xl border border-purple-900/50 hover:border-purple-500/50 transition-all floating card-glow">
+                <div class="text-purple-400 mb-4 text-4xl">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4 text-purple-300">Anında Paylaşım</h3>
+                <p class="text-gray-400">İstediğiniz URL'yi yazın veya rastgele oluşturun. Kayıt olmadan, anında paylaşıma başlayın!</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div data-aos="fade-up" data-aos-delay="100" class="bg-gray-800/50 p-8 rounded-xl border border-purple-900/50 hover:border-purple-500/50 transition-all floating card-glow">
+                <div class="text-purple-400 mb-4 text-4xl">
+                    <i class="fas fa-sync"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4 text-purple-300">Canlı İşbirliği</h3>
+                <p class="text-gray-400">Ekip arkadaşlarınızla aynı anda düzenleme yapın. Tüm değişiklikler anında senkronize olur.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div data-aos="fade-up" data-aos-delay="200" class="bg-gray-800/50 p-8 rounded-xl border border-purple-900/50 hover:border-purple-500/50 transition-all floating card-glow">
+                <div class="text-purple-400 mb-4 text-4xl">
+                    <i class="fas fa-image"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4 text-purple-300">Dosya & Görsel Paylaşımı</h3>
+                <p class="text-gray-400">Kod ve metin yanında dosya ve görsellerinizi de kolayca paylaşın.</p>
+            </div>
+        </div>
     </div>
+</div>
 
-    <!-- Özellikler Bölümü -->
-    <div class="mt-5 text-left" style="max-width: 800px;">
-        <hr class="border-secondary">
-        <h2 class="h4 mb-3">Özellikler</h2>
-        <ul class="list-unstyled">
-            <li class="mb-2">
-                <span class="fw-bold">• Benzersiz URL ile sayfa oluşturma:</span>
-                <em>`/12345` veya `/abcd1` gibi özel bağlantılar kullanarak kendi editör sayfanı oluştur.</em>
-            </li>
-            <li class="mb-2">
-                <span class="fw-bold">• Gerçek zamanlı düzenleme (SignalR):</span>
-                <em>Diğer kullanıcılarla eş zamanlı olarak aynı kod üzerinde çalış, anlık değişimleri paylaş.</em>
-            </li>
-            <li class="mb-2">
-                <span class="fw-bold">• Modern kod editörü (Monaco Editor):</span>
-                <em>Dil vurgulama, IntelliSense gibi gelişmiş özelliklerle kodunu düzenle.</em>
-            </li>
-            <li class="mb-2">
-                <span class="fw-bold">• Dosya ve görsel yükleme:</span>
-                <em>Paylaşmak istediğin dosyaları hızlıca ekle, gerekirse diğer katılımcılarla birlikte düzenle.</em>
-            </li>
-            <li class="mb-2">
-                <span class="fw-bold">• Şifre korumalı sayfalar:</span>
-                <em>Üye olarak oluşturduğun sayfalarına şifre koyabilir, sadece okuma veya düzenleme izni verebilirsin.</em>
-            </li>
-            <li class="mb-2">
-                <span class="fw-bold">• Eş zamanlı düzenleme:</span>
-                <em>Birden fazla kullanıcı aynı anda bir sayfayı düzenleyebilir, yapılan değişiklikleri anında görebilir.</em>
-            </li>
-        </ul>
-        <hr class="border-secondary">
+<!-- Coming Soon -->
+<div class="py-20 bg-gray-800/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 data-aos="fade-down" class="text-3xl font-bold text-center mb-16 text-purple-300 neon-glow">Yakında Gelecek Özellikler</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div data-aos="fade-right" class="bg-gray-800/50 backdrop-blur p-8 rounded-xl border border-purple-900/50 hover:border-purple-500/50 transition-all card-glow">
+                <div class="flex items-center mb-4">
+                    <div class="text-purple-400 text-2xl mr-4">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-purple-300">Şifre Koruması</h3>
+                </div>
+                <p class="text-gray-400">Özel sayfalarınızı şifre ile koruyun. Yalnızca istediğiniz kişiler düzenleme yapabilsin.</p>
+            </div>
+            <div data-aos="fade-left" class="bg-gray-800/50 backdrop-blur p-8 rounded-xl border border-purple-900/50 hover:border-purple-500/50 transition-all card-glow">
+                <div class="flex items-center mb-4">
+                    <div class="text-purple-400 text-2xl mr-4">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-purple-300">Salt Okunur Mod</h3>
+                </div>
+                <p class="text-gray-400">Şifreyi bilmeyen kullanıcılar içeriği yalnızca görüntüleyebilir, düzenleme yapamaz.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How to Use -->
+<div class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div data-aos="fade-up" class="bg-gray-800/50 p-8 rounded-xl border border-purple-900/50">
+            <h2 class="text-3xl font-bold text-center mb-8 text-purple-300">Nasıl Kullanılır?</h2>
+            <div class="space-y-6">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-purple-400 mr-4">1</span>
+                    <p class="text-gray-300">Tarayıcınızın adres çubuğuna <span class="font-mono bg-gray-900/50 px-2 py-1 rounded">editlio.com/istediginiz-metin</span> yazın</p>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-purple-400 mr-4">2</span>
+                    <p class="text-gray-300">Otomatik olarak yeni bir paylaşım sayfası oluşturulacak</p>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-purple-400 mr-4">3</span>
+                    <p class="text-gray-300">URL'yi ekip arkadaşlarınızla paylaşın ve gerçek zamanlı düzenlemeye başlayın!</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

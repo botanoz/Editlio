@@ -23,7 +23,7 @@ builder.Services.AddHttpClient<IPageService, PageService>(client =>
     client.BaseAddress = new Uri(apiBaseAddress));
 builder.Services.AddHttpClient<IFileService, FileService>(client =>
     client.BaseAddress = new Uri(apiBaseAddress));
-
+builder.Services.AddHttpClient();
 // Configure route constraints
 builder.Services.Configure<RouteOptions>(options =>
     options.ConstraintMap.Add("slug", typeof(SlugConstraint)));
@@ -72,12 +72,13 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 
 // Configure routes
 app.MapControllerRoute(
-    name: "PageRoute",
-    pattern: "{slug:slug}",
-    defaults: new { controller = "Page", action = "Index" });
-
-app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "PageRoute",
+    pattern: "{slug}",
+    defaults: new { controller = "Page", action = "Index" });
+
 
 app.Run();

@@ -2,16 +2,10 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/">
-                <i class="fas fa-edit me-2"></i>Editlio
+                Editlio
             </a>
 
-            <ul class="navbar-nav d-none d-lg-flex">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">
-                        <i class="fas fa-home me-1"></i>Anasayfa
-                    </a>
-                </li>
-            </ul>
+         
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -46,48 +40,7 @@
 </header>
 
 <!-- File Management Modal -->
-<div class="modal fade" id="fileManagementModal" tabindex="-1" aria-labelledby="fileManagementModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="fileManagementModalLabel">
-                    <i class="fas fa-folder-open me-2"></i>Dosya Yönetimi
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
-            </div>
-            <div class="modal-body">
-                <div class="upload-section mb-4">
-                    <div class="mb-3">
-                        <label for="fileInput" class="form-label">
-                            <i class="fas fa-upload me-2"></i>Upload Files
-                        </label>
-                        <input type="file" class="form-control" id="fileInput" multiple>
-                    </div>
-                    <button type="button" class="btn btn-dark" id="uploadFilesBtn">
-                        <i class="fas fa-cloud-upload-alt me-2"></i>Yükle
-                    </button>
-                </div>
-                <div class="recent-files">
-                    <h6><i class="fas fa-history me-2"></i>Recent Files</h6>
-                    <div class="list-group">
-                 
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>
-                                    <i class="fas fa-file-alt me-2"></i>Name
-                                </span>
-                                <div class="btn-group">
-                                    <a href="DownloadUrl" class="btn btn-outline-dark btn-sm">
-                                        <i class="fas fa-download me-1"></i>İndir
-                                    </a>
-                                </div>
-                            </div>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+@await Component.InvokeAsync("FileUpload", Model)
 
 <div class="modal fade" id="shortcutsModal" tabindex="-1" aria-labelledby="shortcutsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -222,23 +175,27 @@
                     </div>
 
                     <!-- Girinti İşlemleri -->
-                    <div class="accordion-item">
+                    <div class="accordion-item" style="background-color: #1a1c2b; border: 1px solid rgba(124, 58, 237, 0.2);">
                         <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#indentSection">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#indentSection"
+                                    style="background-color: #1a1c2b !important; color: white !important;">
                                 <i class="fas fa-indent me-2"></i>Girinti İşlemleri
                             </button>
                         </h2>
                         <div id="indentSection" class="accordion-collapse collapse" data-bs-parent="#shortcutsAccordion">
-                            <div class="accordion-body">
+                            <div class="accordion-body text-white">
                                 <div class="table-responsive">
                                     <table class="table table-hover">
                                         <tbody>
-                                            <tr>
-                                                <td><kbd>Tab</kbd></td>
+                                            <tr style="color: #fff;">
+                                                <td><kbd style="background-color: #2d1b4e; border: 1px solid rgba(124, 58, 237, 0.2);">Tab</kbd></td>
                                                 <td>Girinti Ekle veya Boşluk Bırak</td>
                                             </tr>
-                                            <tr>
-                                                <td><kbd>Shift</kbd> + <kbd>Tab</kbd></td>
+                                            <tr style="color: #fff;">
+                                                <td>
+                                                    <kbd style="background-color: #2d1b4e; border: 1px solid rgba(124, 58, 237, 0.2);">Shift</kbd> +
+                                                    <kbd style="background-color: #2d1b4e; border: 1px solid rgba(124, 58, 237, 0.2);">Tab</kbd>
+                                                </td>
                                                 <td>Girintiyi Azalt</td>
                                             </tr>
                                         </tbody>
@@ -252,3 +209,45 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Hover efektleri */
+    .nav-link:hover {
+        color: #fff !important;
+        opacity: 1;
+    }
+
+    .accordion-button:not(.collapsed)::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+
+    .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(124, 58, 237, 0.1) !important;
+        cursor: default;
+    }
+
+    .modal-content {
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+    }
+
+    .btn-close-white:hover {
+        opacity: 1;
+    }
+
+    kbd {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+
+        kbd:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+</style>
+
+
+                   
