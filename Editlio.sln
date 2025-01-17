@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Çözüm Öğeleri", "Çöz
 		docker-compose.yml = docker-compose.yml
 		Dockerfile = Dockerfile
 		Readme.md = Readme.md
+		..\..\..\ShareX\Screenshots\2025-01\editor.gif = ..\..\..\ShareX\Screenshots\2025-01\editor.gif
+		..\..\..\ShareX\Screenshots\2025-01\home.gif = ..\..\..\ShareX\Screenshots\2025-01\home.gif
 	EndProjectSection
 EndProject
 Global
