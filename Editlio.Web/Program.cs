@@ -72,12 +72,13 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 
 // Configure routes
 app.MapControllerRoute(
-    name: "PageRoute",
-    pattern: "{slug:slug}",
-    defaults: new { controller = "Page", action = "Index" });
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Page}/{action=Index}/{id?}");
+    name: "PageRoute",
+    pattern: "{slug}",
+    defaults: new { controller = "Page", action = "Index" });
+
 
 app.Run();
