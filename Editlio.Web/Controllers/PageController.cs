@@ -1,8 +1,13 @@
-﻿using Editlio.Web.Models;
+﻿using Editlio.Shared.DTOs.File;
+using Editlio.Web.Models;
 using Editlio.Web.Services.Abstracts;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http;
+using System.Security.Claims;
+
 
 namespace Editlio.Web.Controllers
 {
@@ -11,16 +16,27 @@ namespace Editlio.Web.Controllers
         private readonly IPageService _pageService;
         private readonly IUserService _userService;
         private readonly HubConnection _hubConnection;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public PageController(IPageService pageService, IUserService userService, IConfiguration configuration)
+        public PageController(
+    IPageService pageService,
+    IUserService userService,
+    IConfiguration configuration,
+    IWebHostEnvironment webHostEnvironment,
+    IHttpClientFactory httpClientFactory)
         {
             _pageService = pageService;
             _userService = userService;
+            _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
+            _httpClientFactory = httpClientFactory;
+
             string hubUrl = configuration["AppSettings:RealtimeHubUrl"] ?? throw new ArgumentNullException("RealtimeHubUrl is missing from configuration.");
-            // SignalR bağlantısını başlat
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl(hubUrl) // Backend API SignalR Hub URL
-                .WithAutomaticReconnect() // Otomatik yeniden bağlanma
+                .WithUrl(hubUrl)
+                .WithAutomaticReconnect()
                 .Build();
         }
 
@@ -57,7 +73,10 @@ namespace Editlio.Web.Controllers
                     IsProtected = false,
                     CreatedAt = DateTime.UtcNow,
                     OwnerId = defaultUser.Id,
-                    OwnerUsername = defaultUser.Username
+                    OwnerUsername = defaultUser.Username,
+                    Files = new List<FileViewModel>(), // Boş dosya listesi
+                    TotalFiles = 0,                    // Başlangıçta dosya yok
+                    IsEditable = true                  // Yeni sayfa düzenlenebilir
                 };
 
                 var createResult = await _pageService.CreatePageAsync(newPage);
@@ -66,13 +85,55 @@ namespace Editlio.Web.Controllers
                     return StatusCode(500, "Failed to create a new page.");
                 }
 
+                // Sayfa için wwwroot/share/ altında klasör oluştur
+                var uploadDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "share", slug);
+                if (!Directory.Exists(uploadDirectory))
+                {
+                    Directory.CreateDirectory(uploadDirectory);
+                }
+
                 return RedirectToAction(nameof(Index), new { slug });
             }
+
+            try
+            {
+                // Dosyaları API'den getir
+                var client = _httpClientFactory.CreateClient();
+                var files = await client.GetFromJsonAsync<List<FileDto>>($"{_configuration["ApiSettings:BaseUrl"]}/api/File/{existingPage.Id}");
+
+                if (files != null)
+                {
+                    existingPage.Files = files.Select(f => new FileViewModel
+                    {
+                        Id = f.Id,
+                        FileName = f.FileName,
+                        FilePath = f.FilePath,
+                        FileSize = f.FileSize,
+                        ContentType = f.ContentType,
+                        PageId = f.PageId
+                    }).ToList();
+
+                    existingPage.TotalFiles = files.Count;
+                }
+            }
+            catch (Exception ex)
+            {
+                // API hatası durumunda boş liste kullan
+                existingPage.Files = new List<FileViewModel>();
+                existingPage.TotalFiles = 0;
+                // Hatayı loglayabilirsiniz
+            }
+
+            // Sayfa düzenleme yetkisi kontrolü
+            existingPage.IsEditable = existingPage.OwnerId == null ||
+                                     (User.Identity?.IsAuthenticated == true &&
+                                      existingPage.OwnerId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0"));
 
             // SignalR'dan mevcut slug için gruba katıl
             await _hubConnection.InvokeAsync("JoinPage", slug);
             ViewData["PageId"] = existingPage.Id;
             ViewData["Title"] = $"Edit - {existingPage.Slug}";
+
             return View(existingPage);
         }
 

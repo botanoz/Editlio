@@ -46,48 +46,7 @@
 </header>
 
 <!-- File Management Modal -->
-<div class="modal fade" id="fileManagementModal" tabindex="-1" aria-labelledby="fileManagementModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="fileManagementModalLabel">
-                    <i class="fas fa-folder-open me-2"></i>Dosya Yönetimi
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
-            </div>
-            <div class="modal-body">
-                <div class="upload-section mb-4">
-                    <div class="mb-3">
-                        <label for="fileInput" class="form-label">
-                            <i class="fas fa-upload me-2"></i>Upload Files
-                        </label>
-                        <input type="file" class="form-control" id="fileInput" multiple>
-                    </div>
-                    <button type="button" class="btn btn-dark" id="uploadFilesBtn">
-                        <i class="fas fa-cloud-upload-alt me-2"></i>Yükle
-                    </button>
-                </div>
-                <div class="recent-files">
-                    <h6><i class="fas fa-history me-2"></i>Recent Files</h6>
-                    <div class="list-group">
-                 
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>
-                                    <i class="fas fa-file-alt me-2"></i>Name
-                                </span>
-                                <div class="btn-group">
-                                    <a href="DownloadUrl" class="btn btn-outline-dark btn-sm">
-                                        <i class="fas fa-download me-1"></i>İndir
-                                    </a>
-                                </div>
-                            </div>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+@await Component.InvokeAsync("FileUpload", Model)
 
 <div class="modal fade" id="shortcutsModal" tabindex="-1" aria-labelledby="shortcutsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">

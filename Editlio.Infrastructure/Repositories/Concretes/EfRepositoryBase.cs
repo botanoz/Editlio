@@ -1,4 +1,5 @@
-﻿using Editlio.Infrastructure.Repositories.Abstracts;
+﻿
+using Editlio.Infrastructure.Repositories.Abstracts;
 using Editlio.Shared.Entities;
 using Editlio.Shared.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -44,17 +45,17 @@ namespace Editlio.Infrastructure.Repositories.Concretes
             return Result<bool>.SuccessResult(exists);
         }
 
-        public async Task<Result> DeleteAsync(TEntity entity, bool permanent = false)
+        public async Task<Result> DeleteAsync(TEntity entity, bool permanent = true)
         {
-            if (permanent)
-            {
+            //if (permanent)
+            //{
                 _dbSet.Remove(entity);
-            }
-            else
-            {
-                entity.DeletedDate = DateTime.UtcNow;
-                _dbSet.Update(entity);
-            }
+            //}
+            //else
+            //{
+            //    entity.DeletedDate = DateTime.UtcNow;
+            //    _dbSet.Update(entity);
+            //}
 
             await _context.SaveChangesAsync();
             return Result.SuccessResult();

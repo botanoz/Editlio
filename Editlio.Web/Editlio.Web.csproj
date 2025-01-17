@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Editlio.Shared\Editlio.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\share\" />
+  </ItemGroup>
+
 </Project>
