@@ -1,13 +1,13 @@
 ﻿<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-code me-2"></i>
                 Editlio
             </a>
 
-         
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -28,8 +28,8 @@
                             <i class="fas fa-keyboard me-1"></i>Editör Kısayolları
                         </button>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link active btn btn-link text-white bg-warning" href="https://buymeacoffee.com/botanoz" target="_blank">
+                    <li class="nav-item">
+                        <a class="nav-link btn-coffee" href="https://buymeacoffee.com/botanoz" target="_blank">
                             <i class="fas fa-coffee me-1"></i>Bana bi' Kahve Ismarla
                         </a>
                     </li>
@@ -45,7 +45,7 @@
 <div class="modal fade" id="shortcutsModal" tabindex="-1" aria-labelledby="shortcutsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
+            <div class="modal-header">
                 <h5 class="modal-title" id="shortcutsModalLabel">
                     <i class="fas fa-keyboard me-2"></i>Editör Kısayolları
                 </h5>
@@ -175,27 +175,23 @@
                     </div>
 
                     <!-- Girinti İşlemleri -->
-                    <div class="accordion-item" style="background-color: #1a1c2b; border: 1px solid rgba(124, 58, 237, 0.2);">
+                    <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#indentSection"
-                                    style="background-color: #1a1c2b !important; color: white !important;">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#indentSection">
                                 <i class="fas fa-indent me-2"></i>Girinti İşlemleri
                             </button>
                         </h2>
                         <div id="indentSection" class="accordion-collapse collapse" data-bs-parent="#shortcutsAccordion">
-                            <div class="accordion-body text-white">
+                            <div class="accordion-body">
                                 <div class="table-responsive">
                                     <table class="table table-hover">
                                         <tbody>
-                                            <tr style="color: #fff;">
-                                                <td><kbd style="background-color: #2d1b4e; border: 1px solid rgba(124, 58, 237, 0.2);">Tab</kbd></td>
+                                            <tr>
+                                                <td><kbd>Tab</kbd></td>
                                                 <td>Girinti Ekle veya Boşluk Bırak</td>
                                             </tr>
-                                            <tr style="color: #fff;">
-                                                <td>
-                                                    <kbd style="background-color: #2d1b4e; border: 1px solid rgba(124, 58, 237, 0.2);">Shift</kbd> +
-                                                    <kbd style="background-color: #2d1b4e; border: 1px solid rgba(124, 58, 237, 0.2);">Tab</kbd>
-                                                </td>
+                                            <tr>
+                                                <td><kbd>Shift</kbd> + <kbd>Tab</kbd></td>
                                                 <td>Girintiyi Azalt</td>
                                             </tr>
                                         </tbody>
@@ -210,44 +206,7 @@
     </div>
 </div>
 
-<style>
-    /* Hover efektleri */
-    .nav-link:hover {
-        color: #fff !important;
-        opacity: 1;
-    }
 
-    .accordion-button:not(.collapsed)::after {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-    }
-
-    .accordion-button::after {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: rgba(124, 58, 237, 0.1) !important;
-        cursor: default;
-    }
-
-    .modal-content {
-        box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
-    }
-
-    .btn-close-white:hover {
-        opacity: 1;
-    }
-
-    kbd {
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
-    }
-
-        kbd:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-</style>
 
 
                    

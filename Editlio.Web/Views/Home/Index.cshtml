@@ -9,10 +9,16 @@
             <h1 data-aos="fade-down" class="text-5xl md:text-6xl font-bold text-purple-300 mb-8 neon-glow">
                 Kodunuzu & Metninizi<br />Anında Paylaşın!
             </h1>
-            <p data-aos="fade-up" class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+            <p data-aos="fade-up" class="text-xl text-gray-300 mb-1 max-w-2xl mx-auto">
                 URL'yi özelleştirin veya rastgele oluşturun.
-                Tarayıcınıza <span class="font-mono bg-purple-900/30 px-2 py-1 rounded text-purple-300">editlio.com/istediginiz-metin</span> yazın,
-                anında paylaşıma başlayın!
+                Tarayıcınıza 
+            </p>
+            <p data-aos ="fade-up" class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+                <span class="font-mono bg-purple-900/30 px-2 py-1 rounded text-purple-300">editlio.com/<span id="typing-text"></span></span>
+                anında paylaşıma başlayın! 
+            </p>
+            <p data-aos="fade-up" class="text-xl text-gray-300 mb-3 max-w-2xl mx-auto">
+                Veya 
             </p>
             <div data-aos="zoom-in" class="flex flex-col md:flex-row gap-4 justify-center">
                 <a href="/generate-slug" class="px-8 py-4 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 transition-all hover:scale-105 shadow-lg shadow-purple-600/50">
@@ -92,7 +98,7 @@
             <div class="space-y-6">
                 <div class="flex items-center">
                     <span class="text-2xl font-bold text-purple-400 mr-4">1</span>
-                    <p class="text-gray-300">Tarayıcınızın adres çubuğuna <span class="font-mono bg-gray-900/50 px-2 py-1 rounded">editlio.com/istediginiz-metin</span> yazın</p>
+                    <p class="text-gray-300">Tarayıcınızın adres çubuğuna <span class="font-mono bg-gray-900/50 px-2 py-1 rounded">editlio.com/istediginiz-metin</span> yazın veya hemen başla butonuna tıklayın</p>
                 </div>
                 <div class="flex items-center">
                     <span class="text-2xl font-bold text-purple-400 mr-4">2</span>
@@ -106,3 +112,29 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Typing efekti
+            new Typed('#typing-text', {
+                strings: [
+                    'istediğiniz-metni-yazın',
+                    'notlarim123',
+                    'proje-x',
+                    'fikrim-bu',
+                    '1gorevimvar',
+                    'gunes'
+                ],
+                typeSpeed: 50,
+                backSpeed: 30,
+                backDelay: 1500,
+                startDelay: 500,
+                loop: true,
+                showCursor: true,
+                cursorChar: '|',
+                autoInsertCss: true,
+            });
+        });
+    </script>
+}
