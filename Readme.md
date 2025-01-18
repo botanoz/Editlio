@@ -1,5 +1,5 @@
 # Editlio 
-
+Editlio, kod ve metin içeriklerini aynı zamanda dosya paylaşmak için basit ama güçlü bir platform sunmayı amaçlar. Ana odak noktası kullanım kolaylığıdır - paylaşıma başlamak için kayıt gerektirmez.
 ![Editlio Home](home.gif)
 
 ## Özellikler
@@ -13,7 +13,6 @@
 
 
 ## Proje Kapsamı
-Editlio, kod ve metin içeriklerini paylaşmak için basit ama güçlü bir platform sunmayı amaçlar. Ana odak noktası kullanım kolaylığıdır - paylaşıma başlamak için kayıt gerektirmez.
 
 ### Mevcut Özellikler
 - Özel/otomatik URL'ler ile anında erişim
@@ -30,6 +29,7 @@ Editlio, kod ve metin içeriklerini paylaşmak için basit ama güçlü bir plat
 ## Teknoloji Altyapısı
 - .NET 8.0
 - ASP.NET Core MVC
+- .NET API
 - Entity Framework Core
 - SignalR 
 - Monaco Editor
@@ -37,7 +37,8 @@ Editlio, kod ve metin içeriklerini paylaşmak için basit ama güçlü bir plat
 - Docker Desteği
 - Clean Architecture
 - Repository Pattern
-- N-Tier Architecture:
+- N-Tier Architecture
+- MSSQL
 
 ## Durum
 Bu proje aktif olarak geliştirilmekte ve yeni özellikler düzenli olarak eklenmektedir. Temel işlevler tamamlanmış ve kararlı durumdadır.
