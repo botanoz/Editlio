@@ -1,4 +1,4 @@
-# Editlio(https://editlio.com)
+# Editlio
 Editlio, kod ve metin içeriklerini aynı zamanda dosya paylaşmak için basit ama güçlü bir platform sunmayı amaçlar. Ana odak noktası kullanım kolaylığıdır - paylaşıma başlamak için kayıt gerektirmez.
 ![Editlio Home](home.gif)(https://editlio.com)
 
