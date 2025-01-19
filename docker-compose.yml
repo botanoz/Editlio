@@ -15,8 +15,10 @@ services:
       - AppSettings__RealtimeHubUrl=http://api:5001/hubs/realtime
     depends_on:
       - db
+      - api
     networks:
       - editlio-network
+    restart: always
 
   api:
     build:
@@ -31,6 +33,7 @@ services:
       - db
     networks:
       - editlio-network
+    restart: always 
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -44,6 +47,7 @@ services:
       - sqldata:/var/opt/mssql
     networks:
       - editlio-network
+    restart: always 
 
 networks:
   editlio-network:
