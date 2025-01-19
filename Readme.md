@@ -1,5 +1,4 @@
-﻿# Editlio
-Özelleştirilebilir URL'ler ile gerçek zamanlı kod ve metin paylaşım platformu
+# Editlio 
 
 ![Editlio Home](home.gif)
 
@@ -11,6 +10,7 @@
  - Çoklu dil desteği 
  - Otomatik tamamlama
 - **Dosya Yönetimi**: Modal arayüz ile dosya ve görsel yükleme/yönetim
+
 
 ## Proje Kapsamı
 Editlio, kod ve metin içeriklerini paylaşmak için basit ama güçlü bir platform sunmayı amaçlar. Ana odak noktası kullanım kolaylığıdır - paylaşıma başlamak için kayıt gerektirmez.
@@ -39,6 +39,7 @@ Editlio, kod ve metin içeriklerini paylaşmak için basit ama güçlü bir plat
 - Repository Pattern
 - N-Tier Architecture:
 
-
 ## Durum
 Bu proje aktif olarak geliştirilmekte ve yeni özellikler düzenli olarak eklenmektedir. Temel işlevler tamamlanmış ve kararlı durumdadır.
+
+
